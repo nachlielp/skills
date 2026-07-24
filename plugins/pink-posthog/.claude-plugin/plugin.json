@@ -1,0 +1,11 @@
+{
+  "name": "pink-posthog",
+  "description": "A house design system for polished UIs: pink paper background, extrabold Archivo headings, white cards with hard offset shadows, chunky 3D press-down buttons, and a selectable accent. Ships plain CSS, a Tailwind v4 @theme setup, and a themed React component library.",
+  "version": "1.0.0",
+  "author": {
+    "name": "nachlielp",
+    "url": "https://github.com/nachlielp"
+  },
+  "homepage": "https://github.com/nachlielp/skills/tree/main/plugins/pink-posthog",
+  "license": "MIT"
+}

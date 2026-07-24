@@ -1,0 +1,259 @@
+/* Pink PostHog design system — drop-in stylesheet.
+   Framework-free: plain CSS custom properties + component classes.
+   Pair with Google Fonts Archivo (400..900) + Source Code Pro (400..700). */
+
+:root {
+  --paper: #faedf0;
+  --paper-dark: #f2dbe1;
+  --ink: #151515;
+  --muted: #6f5b61;
+  --line: #e4c8cf;
+  --line-strong: #c9a0ab;
+  /* Accent — ask the user which set to use (see SKILL.md "Accent"):
+     Classic  --brand: #f54e00; --brand-dark: #b23800; --tint: #fde8de;
+     Sky      --brand: #0369a1; --brand-dark: #075985; --tint: #e0f2fe;
+     Teal     --brand: #0f766e; --brand-dark: #134e4a; --tint: #ccfbf1;
+     Violet   --brand: #7c3aed; --brand-dark: #5b21b6; --tint: #ede9fe;
+     Berry    --brand: #be185d; --brand-dark: #9d174d; --tint: #fce7f3; */
+  --brand: #f54e00;
+  --brand-dark: #b23800;
+  --tint: #fde8de; /* selected/active fills (active nav, chips); hovers stay paper-dark */
+  --success: #2f9110;
+  --success-dark: #1e6309;
+  --success-tint: #e7f4e0; /* success fills — banners, "done" badges/rows */
+  --danger: #b91c1c;
+  --danger-dark: #7f1d1d;
+  --danger-tint: #fee2e2; /* danger fills — error banners, ghost-danger hover */
+  --code-bg: #1d1f27;
+  --code-ink: #e8eaf0;
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Reserve symmetric scrollbar gutters so the page never shifts sideways
+   when content grows past the viewport, and stays visually centered. */
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--paper-dark);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+}
+
+pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  border-radius: 10px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  line-height: 1.55;
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  color: inherit;
+}
+
+/* ---- Buttons ------------------------------------------------------ */
+/* The signature "3D" button: hard bottom edge that depresses on click.
+   One fixed height everywhere — resist adding size variants. */
+.btn {
+  --btn-edge: var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.125rem; /* 34px */
+  border: 1.5px solid var(--btn-edge);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 var(--btn-edge);
+  padding: 0 0.9rem;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--ink);
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition:
+    transform 0.05s ease,
+    box-shadow 0.05s ease,
+    filter 0.1s ease;
+}
+.btn:hover {
+  text-decoration: none;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-primary {
+  --btn-edge: var(--brand-dark);
+  background: var(--brand);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.btn-secondary {
+  background: #fff;
+  color: var(--ink);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #fff7f8;
+}
+.btn-danger {
+  --btn-edge: var(--danger-dark);
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.btn-success {
+  --btn-edge: var(--success-dark);
+  background: var(--success);
+  color: #fff;
+}
+
+/* Borderless sibling — same height and type as .btn. For table row
+   actions and low-emphasis controls. */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.125rem;
+  border: none;
+  border-radius: 6px;
+  padding: 0 0.65rem;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-ghost:hover {
+  background: var(--paper-dark);
+  color: var(--ink);
+}
+.btn-ghost-danger {
+  color: var(--danger);
+}
+.btn-ghost-danger:hover {
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+/* ---- Surfaces ------------------------------------------------------ */
+.card {
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06); /* hard offset — never blur */
+}
+
+.input {
+  width: 100%;
+  height: 2.125rem; /* matches .btn so paired rows align */
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 0.75rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--ink);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04);
+  outline: none;
+}
+.input:focus {
+  border-color: var(--brand); /* no glow rings */
+}
+
+/* Closed <select>: looks like .input, with a line chevron. NOTE the chevron
+   SVG needs viewBox='0 0 24 24' — the path is on a 24-grid; a 16x16 SVG
+   without it clips the arrow. To also theme the OPEN list (Chromium 135+
+   customizable <select>), see references/select-dropdown.md. */
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236f5b61' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+/* Small uppercase kicker label — above headings, table headers,
+   sidebar section titles. (Not named "overline": that collides with
+   Tailwind's text-decoration utility.) */
+.kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Amber warning callout — reads correctly even on pink paper. */
+.callout-warn {
+  background: #fbf3da;
+  border: 1.5px solid #e8c468;
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #4a3a0a;
+  font-size: 14px;
+}

@@ -1,0 +1,57 @@
+{
+  "skill_name": "convex-clerk-pwa",
+  "evals": [
+    {
+      "id": 0,
+      "name": "scaffold-new-app",
+      "prompt": "I want to start a new app called 'reads' for tracking books I'm reading (title, author, status, rating). Set it up on my usual stack \u2014 React+Vite PWA hosted on Vercel, Convex for the db and backend functions, Clerk for auth, service worker with push notifications so I can get reading reminders, and the versioning setup so the installed PWA never serves a stale build after I deploy. Don't run installs or sign into any services \u2014 just produce the complete project files and a SETUP.md that lists the manual connection steps I still need to do.",
+      "expected_output": "A complete project scaffold: package.json with the right deps, vite.config.ts with injectManifest PWA config and version defines, vercel.json with cache headers, src/sw.ts with skipWaiting+push handlers, main.tsx with Clerk+Convex providers and SW auto-update registration, convex/ with schema (books + push_subscriptions), auth.config.ts, push modules, and a SETUP.md covering Convex/Clerk/Vercel/VAPID connection.",
+      "files": [],
+      "expectations": [
+        "package.json includes convex, @clerk/clerk-react, web-push, and vite-plugin-pwa (plus workbox packages) as dependencies",
+        "vite.config.ts configures VitePWA with strategies 'injectManifest' pointing at a hand-written src/sw.ts, and defines build-time version constants (__APP_VERSION__ / __BUILD_HASH__ or equivalent)",
+        "The service worker precaches the injected build manifest and calls skipWaiting() and clients.claim() so new builds activate immediately",
+        "The service worker has a 'push' handler that shows a notification from a JSON payload (tolerating malformed payloads) and a 'notificationclick' handler that focuses an existing window or opens one",
+        "The client SW registration reloads the page on controllerchange with a guard preventing a reload on the very first install, and proactively calls registration.update() on an interval and/or visibility/online events",
+        "vercel.json serves sw.js with a no-cache Cache-Control header, hashed /assets/* as public,max-age=31536000,immutable, and rewrites extensionless routes to /index.html",
+        "convex/auth.config.ts reads CLERK_JWT_ISSUER_DOMAIN from env with applicationID 'convex', and the React entry nests ConvexProviderWithClerk (from convex/react-clerk, receiving Clerk's useAuth) inside ClerkProvider",
+        "The Convex schema defines a books table (title/author/status/rating fields) and a push_subscriptions table with endpoint/p256dh/auth and indexes supporting lookup by user and by endpoint",
+        "Push sending is implemented in a 'use node' Convex action using the web-push package, reading VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY/VAPID_SUBJECT from env, and pruning subscriptions on 404/410 errors",
+        "SETUP.md covers all four connections \u2014 Convex (npx convex dev login/link), Clerk (create app, JWT template named 'convex', issuer domain onto the Convex deployment env), Vercel (build command using npx convex deploy --cmd, CONVEX_DEPLOY_KEY), and VAPID (npx web-push generate-vapid-keys) \u2014 and places each env var in the correct store (.env.local vs Convex env vs Vercel env)"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "preflight-report",
+      "prompt": "Before I start building my next app on my usual stack (Vercel-hosted PWA + Convex + Clerk + web push), check whether this machine and project have access to all the external services I need. Tell me exactly what's missing and walk me through how to connect each missing one \u2014 where to sign up, what to click, which keys go where. Write the result as a PREFLIGHT.md report. Do not actually sign up for anything or modify my accounts.",
+      "expected_output": "A PREFLIGHT.md that checks/covers: local tooling, Convex CLI login + project link, Clerk publishable key + JWT template + CLERK_JWT_ISSUER_DOMAIN on the Convex deployment, Vercel CLI + login + link, VAPID keypair generation, and correctly states which env var lives in .env.local vs Convex dashboard vs Vercel.",
+      "files": [],
+      "expectations": [
+        "PREFLIGHT.md reports the actually-checked status of local tooling (node, pnpm/npm, git) with real versions from this machine, not hypothetical placeholders",
+        "It reports whether the Convex CLI is logged in on this machine (checked via ~/.convex/config.json or equivalent) and explains that 'npx convex dev' performs login and writes CONVEX_DEPLOYMENT/VITE_CONVEX_URL to .env.local",
+        "It covers the Clerk connection concretely: sign up at dashboard.clerk.com, publishable key goes into .env.local as a VITE_ variable, a JWT template named exactly 'convex' must be created, and its issuer URL goes into the Convex deployment env as CLERK_JWT_ISSUER_DOMAIN (not into .env.local)",
+        "It correctly reports that the Vercel CLI is NOT installed on this machine, with the fix (npm i -g vercel, vercel login, vercel link)",
+        "It covers VAPID keys: generated locally with npx web-push generate-vapid-keys (no account needed), public key to the frontend env, private key and mailto: subject only to the Convex deployment env",
+        "It distinguishes the three environment stores (.env.local for dev, Convex deployment env, Vercel project env) and does not misplace any variable (e.g. does not put VAPID_PRIVATE_KEY in Vercel or CLERK_JWT_ISSUER_DOMAIN in .env.local)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "stale-cache-retrofit",
+      "prompt": "I have a small Vite+React app (in the app/ directory) that's deployed on Vercel as a PWA-ish site. My users keep complaining that after I deploy, they still see the old version for days \u2014 especially people who added it to their iPhone home screen \u2014 until they close and reopen it a bunch of times. Fix this properly: I want the app cached so it opens offline, but it should automatically pick up new deploys within a minute or so. Update the project files as needed and explain what each piece does. Don't run installs.",
+      "expected_output": "vite-plugin-pwa (injectManifest) added, a sw.ts with precaching + skipWaiting + clients.claim, registration code with controllerchange reload (guarded for first install) and periodic/visibility update checks, vercel.json with no-cache on sw.js/index.html and immutable assets, and a clear explanation.",
+      "files": [
+        "fixtures/stale-cache-app"
+      ],
+      "expectations": [
+        "The app gains a build-time-precached service worker: vite-plugin-pwa in injectManifest mode (or an equivalent mechanism that precaches hashed build assets), with the plugin added to devDependencies and vite.config.ts",
+        "The service worker calls skipWaiting() and clients.claim() so a newly deployed worker activates and takes control without waiting for all tabs/PWA instances to close",
+        "The page reloads on controllerchange exactly once (refreshing flag or equivalent), guarded so the very first SW install does not trigger a spurious reload",
+        "The registration proactively checks for SW updates beyond navigation \u2014 registration.update() on an interval and/or on visibilitychange-to-visible / online events \u2014 since an installed iOS PWA may not navigate for weeks",
+        "A vercel.json is added serving sw.js (and index.html) with no-cache Cache-Control while hashed /assets/* get long-lived immutable caching",
+        "EXPLANATION.md correctly attributes the stale-version symptom to the SW update lifecycle (waiting worker) and/or HTTP caching of the worker script and index.html, and explains how each added piece fixes it",
+        "The existing app is preserved, not replaced: package name 'notes', App.tsx content, and index.html structure remain, with PWA capability grafted on"
+      ]
+    }
+  ]
+}
