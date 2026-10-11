@@ -92,6 +92,23 @@ PWA icons: the manifest needs `pwa-192x192.png`, `pwa-512x512.png` and
 `apple-touch-icon-180.png` in `public/`. Generate them from a single SVG
 source early — an installable PWA without icons fails silently on iOS.
 
+### iPhone form inputs — prevent persistent focus zoom
+
+Keep the computed font size of `input`, `textarea`, and `select` controls at
+least **16 CSS pixels** on mobile, including search fields and modal forms.
+iOS can zoom into smaller text when a control receives focus and keep the
+page zoomed after submission or dismissal, making the modal and surrounding
+layout appear wider than the screen. Apply the size to the controls themselves;
+small label fonts and shared CSS overrides can otherwise reduce inherited text.
+Preserve pinch zoom rather than disabling scaling through viewport metadata.
+
+Verify add/edit forms on a small iPhone viewport (375px wide), before focus,
+while editing, and after saving or closing. Check that the dialog and page fit
+without horizontal overflow; cover RTL and LTR when both are supported.
+Browser tests can guard computed control sizes and layout bounds, but desktop
+emulation does not reproduce native iOS keyboard zoom. Confirm that behavior
+in the installed iPhone PWA when a device is available.
+
 ### Phase 2 — Convex backend
 
 `npx convex dev` (first run: logs in, creates the project, writes
