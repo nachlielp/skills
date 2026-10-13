@@ -130,6 +130,14 @@ nesting in `main.tsx`) and all three must agree on the literal string
 backend half; `assets/templates/src/main.tsx` already nests
 `ClerkProvider → ConvexProviderWithClerk` correctly.
 
+### Optional — MCP connections without manual OAuth credentials
+
+When adding a Clerk-authenticated MCP server or removing manual client ID and
+secret entry from its connection flow, read `references/mcp-oauth.md`. Prefer
+CIMD for compatible clients; use DCR when the client requires it. Keep user
+sign-in, consent, scopes, and Convex authorization in place. Apply this only
+when an MCP integration is part of the requested app work.
+
 ### Phase 4 — PWA caching + versioning
 
 Goal: the app opens instantly offline from cache, yet a deploy reaches every

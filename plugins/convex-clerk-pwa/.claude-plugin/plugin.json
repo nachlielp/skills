@@ -1,7 +1,7 @@
 {
   "name": "convex-clerk-pwa",
   "description": "Build or retrofit a production React + Vite PWA on Convex, Clerk and Vercel — with web-push notifications and a versioning system that keeps the app cached offline yet never serves a stale build after deploy.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "nachlielp",
     "url": "https://github.com/nachlielp"
