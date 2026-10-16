@@ -53,6 +53,10 @@ system's UI weights.
 - **[references/select-dropdown.md](skills/pink-posthog/references/select-dropdown.md)**
   — theming the *open* native `<select>` list via `::picker(select)`, and its
   gotchas.
+- **[references/mobile-capture.md](skills/pink-posthog/references/mobile-capture.md)**
+  — phone-first logging UIs: the 56/64/104px capture tier, feed home, bottom
+  sheet, keypad and stepper capture, focus-mode timer, Undo toasts, plus an
+  alignment and margin checklist with a way to measure it.
 
 ## Making it your own
 

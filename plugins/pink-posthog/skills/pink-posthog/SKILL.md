@@ -169,11 +169,16 @@ active/selected.
   This covers inputs too — square a search field to 6px like the buttons, never
   a `border-radius: 999px` pill.
 - One button size per page. Resist making a "small" variant; use `.btn-ghost`
-  when a real button is too heavy.
+  when a real button is too heavy. The one exception is the mobile **capture
+  tier** (56/64/104px) for thumb-zone logging controls. It lives only in the
+  bottom third and never shares a row with 34px chrome. See
+  [references/mobile-capture.md](references/mobile-capture.md).
 - Code: inline code gets `paper-dark` bg + `line` border; blocks get the dark
   `#1d1f27` panel with 13px Source Code Pro.
 - Empty states: 1.5px **dashed** `line-strong` border, `muted` text.
 - Overlays: `ink` at 50%; toasts are `ink` with a hard black offset shadow.
+  Prefer an **Undo toast** over an "Are you sure?" dialog for reversible
+  actions, and inset floating toasts on the same side gutter as the cards.
 - Warning callouts keep amber (`#FBF3DA` bg, `#E8C468` border, `#4A3A0A`
   text) — it reads correctly even on pink.
 - Page/section titles are tight 800 `ink` headings (with an optional `.kicker`
@@ -201,6 +206,18 @@ repeatedly — bake these in from the start:
 - **Keep one control height** (34px) so inline rows align; for dense inline row
   actions a 32px square is the only sanctioned smaller size — pick one per
   context and use it for every control in that row.
+- **Align to one gutter, optically.** Every edge (cards, rails, sheets,
+  docked buttons, floating toasts) sits on the same side gutter (18px on a
+  phone). Pull edge ghost/icon buttons out by their padding (`margin-left:
+  -9px` for a 16px icon in a 34px square, `-12px` for a text ghost) so their
+  glyphs line up with the cards. Centre header titles with `grid-template-columns:
+  1fr auto 1fr`, not `space-between`. Make filter-chip rails fill the row
+  (`flex: 1 1 auto`) rather than clip the last chip. Check at 320px.
+- **Log-first / tracker apps** (feed home, big docked "Log" button, bottom
+  sheet of choice tiles, keypad capture, full-screen timer, Undo toasts):
+  read [references/mobile-capture.md](references/mobile-capture.md). It has the
+  component specs and an alignment and margin checklist with a measuring
+  method.
 
 ## Re-hueing
 
