@@ -117,7 +117,18 @@ in the installed iPhone PWA when a device is available.
 
 Schema conventions: snake_case field names, explicit `returns` validators on
 every function, an index for every query pattern (never `.filter()` on a full
-table scan). Start `convex/schema.ts` from
+table scan).
+
+Read `references/convex-patterns.md` before changing a schema or validator,
+writing a delete/undo, or adding a by-id query:
+- Installed PWAs run the previous bundle against the new functions, so every
+  backend change must work with the old client too: new fields optional,
+  retired values still accepted, and functions removed a release after
+  nothing calls them.
+- An undo must restore a denormalized `last_*` field on the parent, even
+  when no children are left.
+- A by-id read returns `null` for a missing record or someone else's, and is
+  tested for both the owner and a stranger. Start `convex/schema.ts` from
 `assets/templates/convex/schema.ts`, which includes the `push_subscriptions`
 table the push module needs.
 
@@ -183,6 +194,18 @@ set in Vercel env vars), so every frontend deploy pushes the matching Convex
 functions and injects the production `VITE_CONVEX_URL` at build time. After
 the first deploy, verify the update loop end-to-end: deploy a trivial change
 and confirm an already-open tab reloads itself within ~1 minute.
+
+After every release, run the signed-out smoke test,
+`node <skill-dir>/scripts/prod-smoke.mjs --url https://<app> --old <previous
+entry bundle> --marker "<new copy>"`. It waits for the new bundle, then
+checks:
+- that the new code shipped, including lazy-loaded chunks and CSS,
+- that deep links serve the app,
+- console errors and failed requests,
+- that the service worker activates.
+
+Never sign in on production to test. The reference also covers the
+dev → main release checks: whether Convex needs a deploy, and in what order.
 
 ## Retrofitting onto an existing app
 

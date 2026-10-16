@@ -47,7 +47,10 @@ graft one piece onto an app you already have.
    missing, one service at a time.
 1. **Scaffold** — Vite + deps, then the file templates.
 2. **Convex backend** — schema conventions: snake_case fields, explicit
-   `returns` validators, an index for every query pattern.
+   `returns` validators, an index for every query pattern. Every backend
+   change must work with the previous client, because installed PWAs keep
+   running the old bundle for a while. Undo restores denormalized `last_*`
+   fields, and by-id reads return `null` to anyone but the owner.
 3. **Clerk auth** — the integration has three moving parts that must all agree
    on the literal string `"convex"`; the reference spells them out.
 4. **PWA caching + versioning** — the app opens instantly offline from cache,
@@ -58,7 +61,8 @@ graft one piece onto an app you already have.
 5. **Push notifications** — sent from a Convex `"use node"` action via
    `ctx.scheduler.runAfter`, so notifications fire even when the app is closed.
 6. **Deploy to Vercel** — build command `npx convex deploy --cmd 'pnpm build'`,
-   so every frontend deploy ships the matching backend.
+   so every frontend deploy ships the matching backend. After each release, a
+   smoke test checks the new code shipped without signing in to production.
 
 ## What's in it
 
@@ -71,13 +75,22 @@ graft one piece onto an app you already have.
   `convex/pushNode.ts`.
 - **[scripts/preflight.sh](skills/convex-clerk-pwa/scripts/preflight.sh)** —
   the service-connectivity check.
+- **[scripts/prod-smoke.mjs](skills/convex-clerk-pwa/scripts/prod-smoke.mjs)** —
+  the post-release check, run signed out. It waits for the new bundle, then
+  checks:
+  - that the new code shipped, using markers in lazy-loaded chunks and CSS,
+  - that deep links serve the app,
+  - console errors and failed requests,
+  - that the service worker activates.
 - **references/** —
   [preflight](skills/convex-clerk-pwa/references/preflight.md) (per-service
   signup walkthroughs + which env var lives where),
   [clerk-convex](skills/convex-clerk-pwa/references/clerk-convex.md),
   [pwa-versioning](skills/convex-clerk-pwa/references/pwa-versioning.md),
   [push-notifications](skills/convex-clerk-pwa/references/push-notifications.md),
-  [deploy-vercel](skills/convex-clerk-pwa/references/deploy-vercel.md).
+  [deploy-vercel](skills/convex-clerk-pwa/references/deploy-vercel.md),
+  [convex-patterns](skills/convex-clerk-pwa/references/convex-patterns.md)
+  (backward-compatible changes, undo, ownership-checked reads).
 - **[evals/evals.json](skills/convex-clerk-pwa/evals/evals.json)** — the test
   cases the skill is checked against.
 
